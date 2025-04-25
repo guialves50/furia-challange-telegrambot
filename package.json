@@ -1,0 +1,23 @@
+{
+  "name": "telegrambot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/dotenv": "^6.1.1",
+    "@types/node": "^22.15.2",
+    "@types/node-fetch": "^2.6.12",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "grammy": "^1.36.1"
+  }
+}
