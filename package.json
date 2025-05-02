@@ -18,6 +18,8 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
+    "@api/developers-pandascore": "file:.api/apis/developers-pandascore",
+    "axios": "^1.9.0",
     "dotenv": "^16.5.0",
     "grammy": "^1.36.1"
   }

@@ -1,7 +1,6 @@
 import { InlineKeyboard } from "grammy";
 
-// Simula dados vindos de um banco ou API
-const categorias = ["Próximos jogos da FURIA", "Resultados & estatísticas", "Perfil dos jogadores", "Notícias", "Alertas e notificações"];
+const categorias = ["Próximos jogos da FURIA", "Resultados", "Perfil dos jogadores", "Notícias"];
 
 export function buildCategoryMenu(): InlineKeyboard {
   const keyboard = new InlineKeyboard();

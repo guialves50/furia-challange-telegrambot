@@ -1,0 +1,1 @@
+export const userMessageMap = new Map<number, number>();

@@ -7,10 +7,9 @@ export function startCommand(ctx: Context) {
 
 Aqui você pode encontrar:
 \\- 🗓️ Próximos jogos da FURIA
-\\- 📊 Resultados & estatísticas
+\\- 📊 Resultados
 \\- 🦁 Perfil dos jogadores
 \\- 📰 Notícias
-\\- 📢 Alertas e notificações
 
 Escolha uma categoria abaixo para começar:
 `
