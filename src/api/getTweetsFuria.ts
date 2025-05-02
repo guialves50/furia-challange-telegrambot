@@ -1,22 +1,36 @@
 export async function getTweetsFuria() {
-  const url = new URL("https://api.twitter.com/2/tweets/search/recent");
-  url.searchParams.append(
-    "query",
-    "@FURIA #FURIACS"
-  );
-  url.searchParams.append("max_results", "1");
-  url.searchParams.append("tweet.fields", "created_at,author_id,text");
+  const url = "https://api.twitter.com/2/tweets/search/recent";
+  const params = new URLSearchParams();
+  params.append("query", "@FURIA #FURIACS");
+  params.append("max_results", "10");
+  params.append("tweet.fields", "created_at,author_id,text");
 
-  const response = await fetch(url.toString(), {
-    headers: {
-      Authorization: `Bearer ${process.env.TWITTER_TOKEN}`,
-    },
-  });
+  const fullUrl = `${url}?${params.toString()}`;
+  const bearerToken = process.env.TWITTER_TOKEN;
 
-  if (!response.ok) {
-    throw new Error(`Erro ao buscar tweets: ${response.status} ${response.statusText}`);
+  if (!bearerToken) {
+    console.error("❌ TWITTER_TOKEN não está definido nas variáveis de ambiente.");
+    return [];
   }
 
-  const data = await response.json();
-  return data.data || [];
+  try {
+    const response = await fetch(fullUrl, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${bearerToken}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      const text = await response.text();
+      throw new Error(`Erro ${response.status}: ${text}`);
+    }
+
+    const json = await response.json();
+    return json.data || [];
+  } catch (error: any) {
+    console.error("Erro ao buscar tweets:", error.message || error);
+    return [];
+  }
 }

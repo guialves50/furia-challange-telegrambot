@@ -30,8 +30,9 @@ export async function handlerNoticias(ctx: MyContext) {
     const mensagens = tweets.map((tweet: any) => {
       const data = new Date(tweet.created_at).toLocaleString("pt-BR");
       const texto = escapeMarkdown(tweet.text);
-      return `🟡 *${data}*\n${texto}\n[🔗 Ver no Twitter](https://twitter.com/i/web/status/${tweet.id})\n`;
-    });
+    
+      return `🗓 *${data}*\n\n📢 ${texto}\n\n🔗 [Ver no Twitter](https://twitter.com/i/web/status/${tweet.id})\n${"━".repeat(25)}`;
+    });    
 
     const msg = await ctx.reply(
       `📰 *Últimos tweets sobre a FURIA:*\n\n${mensagens.join("\n")}`,
