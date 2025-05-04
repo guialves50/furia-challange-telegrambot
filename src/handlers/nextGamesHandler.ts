@@ -1,9 +1,9 @@
-import { getProximosJogos } from "../api/getProximosJogos.js";
-import { Context, Api } from "grammy";
+import { getProximosJogos } from "../api/getNextGames.js";
+import { Context, Api,  } from "grammy";
 import "dotenv/config"
 import deleteMenuMessage from "../utils/deleteMessage.js";
 import { deletePreviousBotMessage } from "../utils/deletePreviousBotMessage.js";
-import { userMessageMap } from "../utils/sessionStorage.js";
+import { Message } from "grammy/types";
 
 type MyContext = Context & { api: Api };
 
@@ -13,25 +13,23 @@ type Match = {
   match_videos: { embed_url: string }[];
 };
 
-export async function handlerProximosJogos(ctx: MyContext) {
-  if (!ctx.chat || !ctx.from) return;
+export async function handlerProximosJogos(ctx: MyContext): Promise<Message.TextMessage> {
+  if (!ctx.chat) {
+    return await ctx.reply("❌ Erro ao carregar o chat.");
+  }
 
   await deleteMenuMessage(ctx);
-
   await deletePreviousBotMessage(ctx);
 
   await ctx.api.sendChatAction(ctx.chat.id, "typing");
     
   const jogos = await getProximosJogos();
-
   if (!jogos || jogos.length === 0) {
-    const noMatchMsg = await ctx.reply("🚫 Nenhum jogo futuro encontrado.");
-    userMessageMap.set(ctx.from.id, noMatchMsg.message_id);
-    return;
+    if(!ctx.from?.id) 
+    await ctx.reply("🚫 Nenhum jogo futuro encontrado.");
   }
 
   let mensagem = "🎮 *Próximos jogos da FURIA:*\n\n";
-      
   (jogos as Match[]).forEach((jogo: Match) => {
     const data = new Date(jogo.begin_at);
     mensagem += `🕒 *${data.toLocaleString()}*\n`;
@@ -40,8 +38,5 @@ export async function handlerProximosJogos(ctx: MyContext) {
   });
 
   const msg = await ctx.reply(mensagem, { parse_mode: "Markdown" });
-
-  if (ctx.from?.id) {
-    userMessageMap.set(ctx.from.id, msg.message_id);
-  }
+  return msg
 }

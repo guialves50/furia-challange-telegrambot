@@ -1,9 +1,16 @@
 export async function getTweetsFuria() {
   const url = "https://api.twitter.com/2/tweets/search/recent";
   const params = new URLSearchParams();
-  params.append("query", "@FURIA #FURIACS");
-  params.append("max_results", "10");
+
+  const query = '(from:FURIA #FURIACS) lang:pt -is:retweet';
+  params.append("query", query);
   params.append("tweet.fields", "created_at,author_id,text");
+
+  type Tweet = {
+    id: string;
+    text: string;
+    created_at: string;
+  };
 
   const fullUrl = `${url}?${params.toString()}`;
   const bearerToken = process.env.TWITTER_TOKEN;
@@ -28,7 +35,7 @@ export async function getTweetsFuria() {
     }
 
     const json = await response.json();
-    return json.data || [];
+    return json.data as Tweet[] || [];
   } catch (error: any) {
     console.error("Erro ao buscar tweets:", error.message || error);
     return [];

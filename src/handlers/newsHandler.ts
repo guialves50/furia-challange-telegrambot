@@ -3,50 +3,56 @@ import { Context, Api } from "grammy";
 import deleteMenuMessage from "../utils/deleteMessage.js";
 import { deletePreviousBotMessage } from "../utils/deletePreviousBotMessage.js";
 import { userMessageMap } from "../utils/sessionStorage.js";
+import { Message } from "grammy/types";
 
 type MyContext = Context & { api: Api };
 
-export async function handlerNoticias(ctx: MyContext) {
+type Tweet = {
+  id: string;
+  text: string;
+  created_at: string;
+};
+
+export async function handlerNoticias(ctx: MyContext): Promise<Message.TextMessage> {
   try {
-    if (!ctx.chat || !ctx.from) return;
+    if (!ctx.chat) {
+      return await ctx.reply("❌ Erro ao carregar o chat.");
+    }
 
     await deleteMenuMessage(ctx);
-
     await deletePreviousBotMessage(ctx);
 
     await ctx.api.sendChatAction(ctx.chat.id, "typing");
-
-    const tweets = await getTweetsFuria();
-
+    
+    const tweets: Tweet[] = await getTweetsFuria();
+    const uniqueTweets = Array.from(
+      new Map(tweets.map(t => [t.text, t as Tweet])).values()
+    );
     if (tweets.length === 0) {
-      const noTweetMsg = await ctx.reply("⚠️ *Nenhum tweet recente sobre a FURIA foi encontrado.*", {
+      if(!ctx.from?.id) 
+      await ctx.reply("⚠️ *Nenhum tweet recente sobre a FURIA foi encontrado.*", {
         parse_mode: "Markdown",
       });
-
-      userMessageMap.set(ctx.from.id, noTweetMsg.message_id);
-      return;
     }
 
-    const mensagens = tweets.map((tweet: any) => {
+    const mensagens = uniqueTweets.map((tweet: any) => {
       const data = new Date(tweet.created_at).toLocaleString("pt-BR");
       const texto = escapeMarkdown(tweet.text);
-    
       return `🗓 *${data}*\n\n📢 ${texto}\n\n🔗 [Ver no Twitter](https://twitter.com/i/web/status/${tweet.id})\n${"━".repeat(25)}`;
-    });    
+    });
 
-    const msg = await ctx.reply(
-      `📰 *Últimos tweets sobre a FURIA:*\n\n${mensagens.join("\n")}`,
-      { parse_mode: "Markdown" }
-    );
+    const msg = await ctx.reply(`📰 *Últimos tweets sobre a FURIA:*\n\n${mensagens.join("\n")}`, { parse_mode: "Markdown" });
+    return msg
 
-    if (ctx.from?.id) {
-      userMessageMap.set(ctx.from.id, msg.message_id);
-    }
   } catch (error) {
-    if(!ctx.from) return
-    console.error("Erro no handler de tweets:", error);
+    if (!ctx.from) {
+      console.error("Erro no handler de tweets:", error);
+      return await ctx.reply("❌ *Erro ao buscar tweets da FURIA.*", { parse_mode: "Markdown" });
+    }
+  
     const msgNoticiaError = await ctx.reply("❌ *Erro ao buscar tweets da FURIA.*", { parse_mode: "Markdown" });
-    return userMessageMap.set(ctx.from.id, msgNoticiaError.message_id);
+    userMessageMap.set(ctx.from.id, msgNoticiaError.message_id);
+    return msgNoticiaError;
   }
 }
 

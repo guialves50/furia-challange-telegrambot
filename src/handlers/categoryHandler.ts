@@ -1,50 +1,48 @@
 import { Context } from "grammy";
-import { handlerProximosJogos } from "./proximosJogosHandler.js";
-import { handlerResultadosEStats } from "./resultadosHandler.js";
+import { handlerProximosJogos } from "./nextGamesHandler.js";
+import { handlerResultadosEStats } from "./resultsHandler.js";
 import { handlerFuriaPlayers } from "./furiaPlayersHandler.js";
-import { handlerNoticias } from "./noticiasHandler.js";
+import { handlerNoticias } from "./newsHandler.js";
 import { startCommand } from "../commands/startCommand.js";
 import { userMessageMap } from "../utils/sessionStorage.js";
+import { deletePreviousBotMessage } from "../utils/deletePreviousBotMessage.js";
 
 export async function handleCategory(ctx: Context) {
   await ctx.answerCallbackQuery();
   const category = ctx.callbackQuery?.data?.replace("cat:", "");
+  const userId = ctx.from?.id;
 
   if (!category) return ctx.reply("❌ Categoria inválida.");
 
-  const userId = ctx.from?.id;
+  await deletePreviousBotMessage(ctx);
 
+  const loadingMessage = await ctx.reply("⏳ Carregando...");
+
+  let finalMsg;
   switch (category) {
-    case "Próximos jogos da FURIA": {
-      const msg = await ctx.reply("⏳ Carregando os próximos jogos...");
-      await handlerProximosJogos(ctx);
-      if (userId) userMessageMap.set(userId, msg.message_id);
+    case "Próximos jogos da FURIA":
+      finalMsg = await handlerProximosJogos(ctx);
       break;
-    }
-
-    case "Resultados": {
-      const msg = await ctx.reply("📊 Carregando resultados...");
-      await handlerResultadosEStats(ctx);
-      if (userId) userMessageMap.set(userId, msg.message_id);
+    case "Resultados":
+      finalMsg = await handlerResultadosEStats(ctx);
       break;
-    }
-
-    case "Perfil dos jogadores": {
-      const msg = await ctx.reply("🦁 Mostrando perfis dos jogadores...");
-      await handlerFuriaPlayers(ctx);
-      if (userId) userMessageMap.set(userId, msg.message_id);
+    case "Perfil dos jogadores":
+      finalMsg = await handlerFuriaPlayers(ctx);
       break;
-    }
-
-    case "Notícias": {
-      const msg = await ctx.reply("📰 Aqui estão as últimas notícias...");
-      await handlerNoticias(ctx);
-      if (userId) userMessageMap.set(userId, msg.message_id);
+    case "Notícias":
+      finalMsg = await handlerNoticias(ctx);
       break;
-    }
-
     default:
       return ctx.reply("🤔 Categoria não reconhecida.");
+  }
+
+  try {
+    if(!ctx.chat) return
+    await ctx.api.deleteMessage(ctx.chat.id, loadingMessage.message_id);
+  } catch (_) {}
+
+  if (userId && finalMsg?.message_id) {
+    userMessageMap.set(userId, finalMsg.message_id);
   }
 
   await startCommand(ctx);
