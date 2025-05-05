@@ -15,7 +15,7 @@ type Tweet = {
 
 export async function handlerNoticias(ctx: MyContext): Promise<Message.TextMessage> {
   try {
-    if (!ctx.chat || ctx.from) {
+    if (!ctx.chat) {
       return await ctx.reply("❌ Erro ao carregar o chat.");
     }
 
@@ -34,7 +34,6 @@ export async function handlerNoticias(ctx: MyContext): Promise<Message.TextMessa
         parse_mode: "Markdown",
       });
     }
-    userMessageMap.set(ctx.from.id, notFoundTweet.message_id);
 
     const mensagens = uniqueTweets.map((tweet: any) => {
       const data = new Date(tweet.created_at).toLocaleString("pt-BR");
