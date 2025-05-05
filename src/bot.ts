@@ -10,8 +10,6 @@ export const bot = new Bot(process.env.TOKEN!);
 //register commands
 registerBotCommands(bot)
 
-//middlewares
-
 //commands
 bot.command("start", startCommand)
 
