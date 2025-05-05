@@ -51,8 +51,13 @@ Instale as dependências
   npm install
 ```
 
-Inicie o servidor
+Builde o projeto
 
+```bash
+  npm run build
+```
+
+Inicie o bot
 ```bash
   npm run start
 ```
