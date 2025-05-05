@@ -26,6 +26,7 @@ export async function handlerResultadosEStats(ctx: MyContext): Promise<Message.T
   let mensagem = "🎮 *Últimos jogos da FURIA:*\n\n";
   for (const jogo of jogos) {
     const matchId = jogo.games?.[0]?.match_id;
+    console.log(matchId)
   
     mensagem += `*${jogo.name}*\n`;
     mensagem += `🏆 *${jogo.league.name + " " + jogo.serie.name || "Campeonato desconhecido"}*\n`;
@@ -52,7 +53,7 @@ export async function handlerResultadosEStats(ctx: MyContext): Promise<Message.T
       }
     }
   
-    mensagem += `--------------------------------------------------------\n\n`;
+    mensagem += `--------------------------------------------\n\n`;
   }
   
 
