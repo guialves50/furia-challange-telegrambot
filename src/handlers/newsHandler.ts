@@ -30,7 +30,7 @@ export async function handlerNoticias(ctx: MyContext): Promise<Message.TextMessa
     );
     if (tweets.length === 0) {
       if(!ctx.from?.id) 
-      const notFoundTweet = await ctx.reply("⚠️ *Nenhum tweet recente sobre a FURIA foi encontrado.*", {
+      await ctx.reply("⚠️ *Nenhum tweet recente sobre a FURIA foi encontrado.*", {
         parse_mode: "Markdown",
       });
     }
