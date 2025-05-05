@@ -41,8 +41,9 @@ export async function handlerNoticias(ctx: MyContext): Promise<Message.TextMessa
       return `🗓 *${data}*\n\n📢 ${texto}\n\n🔗 [Ver no Twitter](https://twitter.com/i/web/status/${tweet.id})\n${"━".repeat(25)}`;
     });
 
-    const msg = await ctx.reply(`📰 *Últimos tweets sobre a FURIA:*\n\n${mensagens.join("\n")}`, { parse_mode: "Markdown" });
-    return msg
+    let msg = `📰 *Últimos tweets sobre a FURIA:*\n`;
+    msg += mensagens
+    return ctx.reply(msg, { parse_mode: "Markdown" })
 
   } catch (error) {
     if (!ctx.from) {
