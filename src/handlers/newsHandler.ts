@@ -41,7 +41,7 @@ export async function handlerNoticias(ctx: MyContext): Promise<Message.TextMessa
       return `🗓 *${data}*\n\n📢 ${texto}\n\n🔗 [Ver no Twitter](https://twitter.com/i/web/status/${tweet.id})\n${"━".repeat(25)}`;
     });
 
-    if(mensagens.length === 0) {
+    if(!mensagens) {
       throw new Error("❌ - Erro na requisição - STATUS CODE 429")
     }
 
