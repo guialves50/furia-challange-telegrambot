@@ -10,7 +10,7 @@ type MyContext = Context & { api: Api };
 type Match = {
   begin_at: string;
   name: string;
-  match_videos: { embed_url: string }[];
+  streams_list: { embed_url: string }[];
 };
 
 export async function handlerProximosJogos(ctx: MyContext): Promise<Message.TextMessage> {
@@ -34,7 +34,7 @@ export async function handlerProximosJogos(ctx: MyContext): Promise<Message.Text
     const data = new Date(jogo.begin_at);
     mensagem += `🕒 *${data.toLocaleString()}*\n`;
     mensagem += `🏆 *${jogo.name}*\n`;
-    mensagem += `📅 *${jogo.match_videos?.[0]?.embed_url ?? 'Sem link para vídeo'}*\n\n`;
+    mensagem += `📅 *${jogo.streams_list?.[0]?.embed_url ?? 'Sem link para vídeo'}*\n\n`;
   });
 
   const msg = await ctx.reply(mensagem, { parse_mode: "Markdown" });
