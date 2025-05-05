@@ -41,6 +41,10 @@ export async function handlerNoticias(ctx: MyContext): Promise<Message.TextMessa
       return `🗓 *${data}*\n\n📢 ${texto}\n\n🔗 [Ver no Twitter](https://twitter.com/i/web/status/${tweet.id})\n${"━".repeat(25)}`;
     });
 
+    if(mensagens.length === 0) {
+      throw new Error("❌ - Erro na requisição - STATUS CODE 429")
+    }
+
     const msg = await ctx.reply(`📰 *Últimos tweets sobre a FURIA:*\n\n${mensagens.join("\n")}`, { parse_mode: "Markdown" });
     return msg
 
