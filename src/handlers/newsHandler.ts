@@ -15,7 +15,7 @@ type Tweet = {
 
 export async function handlerNoticias(ctx: MyContext): Promise<Message.TextMessage> {
   try {
-    if (!ctx.chat) {
+    if (!ctx.chat || ctx.from) {
       return await ctx.reply("❌ Erro ao carregar o chat.");
     }
 
