@@ -30,10 +30,11 @@ export async function handlerNoticias(ctx: MyContext): Promise<Message.TextMessa
     );
     if (tweets.length === 0) {
       if(!ctx.from?.id) 
-      await ctx.reply("⚠️ *Nenhum tweet recente sobre a FURIA foi encontrado.*", {
+      const notFoundTweet = await ctx.reply("⚠️ *Nenhum tweet recente sobre a FURIA foi encontrado.*", {
         parse_mode: "Markdown",
       });
     }
+    userMessageMap.set(ctx.from.id, notFoundTweet.message_id);
 
     const mensagens = uniqueTweets.map((tweet: any) => {
       const data = new Date(tweet.created_at).toLocaleString("pt-BR");
