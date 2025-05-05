@@ -2,7 +2,7 @@ export async function getTweetsFuria() {
   const url = "https://api.twitter.com/2/tweets/search/recent";
   const params = new URLSearchParams();
 
-  const query = '(@FURIA #FURIACS) lang:pt -is:retweet';
+  const query = '(from:FURIA) lang:pt -is:retweet';
   params.append("query", query);
   params.append("tweet.fields", "created_at,author_id,text");
 
